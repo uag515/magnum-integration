@@ -89,7 +89,7 @@ enum class HmdCapability: Int {
 
 @see @ref Hmd::setEnabledCaps()
 */
-typedef Containers::EnumSet<HmdCapability> HmdCapabilities;
+typedef Containers::EnumSet<HmdCapability, Int> HmdCapabilities;
 
 CORRADE_ENUMSET_OPERATORS(HmdCapabilities)
 
@@ -114,7 +114,7 @@ enum class HmdTrackingCapability: Int {
 
 @see @ref Hmd::configureTracking()
 */
-typedef Containers::EnumSet<HmdTrackingCapability> HmdTrackingCapabilities;
+typedef Containers::EnumSet<HmdTrackingCapability, Int> HmdTrackingCapabilities;
 
 CORRADE_ENUMSET_OPERATORS(HmdTrackingCapabilities)
 
@@ -131,7 +131,7 @@ enum class HmdStatusFlag: UnsignedByte {
 };
 
 /** @brief HMD status flags */
-typedef Containers::EnumSet<HmdStatusFlag> HmdStatusFlags;
+typedef Containers::EnumSet<HmdStatusFlag, UnsignedByte> HmdStatusFlags;
 
 CORRADE_ENUMSET_OPERATORS(HmdStatusFlags)
 

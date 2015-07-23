@@ -53,9 +53,9 @@ enum class HmdTrackingCapability: Int;
 enum class HmdStatusFlag: UnsignedByte;
 enum class LayerType: Int;
 
-typedef Containers::EnumSet<HmdCapability> HmdCapabilities;
-typedef Containers::EnumSet<HmdTrackingCapability> HmdTrackingCapabilities;
-typedef Containers::EnumSet<HmdStatusFlag> HmdStatusFlags;
+typedef Containers::EnumSet<HmdCapability, Int> HmdCapabilities;
+typedef Containers::EnumSet<HmdTrackingCapability, Int> HmdTrackingCapabilities;
+typedef Containers::EnumSet<HmdStatusFlag, UnsignedByte> HmdStatusFlags;
 
 }}
 
