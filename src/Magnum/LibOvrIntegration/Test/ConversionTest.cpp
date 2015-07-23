@@ -48,7 +48,7 @@ struct ConversionTest: TestSuite::Tester {
 };
 
 ConversionTest::ConversionTest() {
-    addTests({&ConversionTest::sizei,
+    addTests<ConversionTest>({&ConversionTest::sizei,
               &ConversionTest::vector2i,
               &ConversionTest::vector2f,
               &ConversionTest::vector3f,
