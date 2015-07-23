@@ -34,6 +34,14 @@
 # Features of found Corrade library are exposed in these variables:
 #  CORRADE_GCC47_COMPATIBILITY  - Defined if compiled with compatibility
 #   mode for GCC 4.7
+#  CORRADE_GCC46_COMPATIBILITY  - Defined if compiled with compatibility
+#   mode for GCC 4.6
+#  CORRADE_GCC45_COMPATIBILITY  - Defined if compiled with compatibility
+#   mode for GCC 4.5
+#  CORRADE_GCC44_COMPATIBILITY  - Defined if compiled with compatibility
+#   mode for GCC 4.4
+#  CORRADE_MSVC2013_COMPATIBILITY - Defined if compiled with compatibility
+#   mode for MSVC 2013
 #  CORRADE_BUILD_DEPRECATED     - Defined if compiled with deprecated APIs
 #   included
 #  CORRADE_BUILD_STATIC         - Defined if compiled as static libraries
@@ -191,6 +199,10 @@ endif()
 file(READ ${CORRADE_INCLUDE_DIR}/Corrade/configure.h _corradeConfigure)
 set(_corradeFlags
     GCC47_COMPATIBILITY
+    GCC46_COMPATIBILITY
+    GCC45_COMPATIBILITY
+    GCC44_COMPATIBILITY
+    MSVC2013_COMPATIBILITY
     BUILD_DEPRECATED
     BUILD_STATIC
     TARGET_UNIX
