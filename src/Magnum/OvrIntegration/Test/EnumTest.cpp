@@ -47,7 +47,7 @@ struct EnumTest: TestSuite::Tester {
 };
 
 EnumTest::EnumTest() {
-    addTests({&EnumTest::hmdType,
+    addTests<EnumTest>({&EnumTest::hmdType,
               &EnumTest::hmdTrackingCapability,
               &EnumTest::statusFlag,
               &EnumTest::performanceHudMode,
