@@ -25,4 +25,44 @@
 #   DEALINGS IN THE SOFTWARE.
 #
 
-corrade_add_test(LibOvrConversionTest ConversionTest.cpp LIBRARIES ${MAGNUM_LIBRARY})
+find_package(OVR REQUIRED)
+
+include_directories(${OVR_INCLUDE_DIR})
+
+set(MagnumOvrIntegration_SRCS
+    Compositor.cpp
+    Conversion.cpp
+    Context.cpp
+    Hmd.cpp
+    HmdEnum.cpp)
+
+set(MagnumOvrIntegration_HEADERS
+    OvrIntegration.h
+    Conversion.h
+    HmdEnum.h
+    Context.h
+    Hmd.h
+    Compositor.h
+
+    visibility.h)
+
+# OvrIntegration library
+add_library(MagnumOvrIntegration SHARED
+    ${MagnumOvrIntegration_SRCS}
+    ${MagnumOvrIntegration_HEADERS})
+set_target_properties(MagnumOvrIntegration PROPERTIES DEBUG_POSTFIX "-d")
+if(BUILD_STATIC_PIC)
+    set_target_properties(MagnumOvrIntegration PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+target_link_libraries(MagnumOvrIntegration
+    ${MAGNUM_LIBRARIES}
+    ${OVR_LIBRARY})
+
+install(TARGETS MagnumOvrIntegration DESTINATION ${MAGNUM_LIBRARY_INSTALL_DIR}
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib)
+install(FILES ${MagnumOvrIntegration_HEADERS} DESTINATION ${MAGNUM_INCLUDE_INSTALL_DIR}/OvrIntegration)
+
+if(BUILD_TESTS)
+    add_subdirectory(Test)
+endif()

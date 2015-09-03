@@ -24,29 +24,33 @@
     DEALINGS IN THE SOFTWARE.
 */
 
+#include "Magnum/OvrIntegration/Hmd.h"
 
-#include "Magnum/LibOVRIntegration/Hmd.h"
-
-#include "Magnum/LibOVRIntegration/HmdEnum.h"
-#include "Magnum/LibOVRIntegration/Conversion.h"
+#include "Magnum/OvrIntegration/HmdEnum.h"
+#include "Magnum/OvrIntegration/Conversion.h"
 
 #include <Magnum/TextureFormat.h>
 
 #include <OVR_CAPI_GL.h>
-#include <OVR_CAPI_Util.h>
 #undef near
 #undef far
 
-namespace Magnum { namespace LibOvrIntegration {
+#include <OVR_CAPI_Keys.h>
 
-SwapTextureSet::SwapTextureSet(const Hmd& hmd, TextureFormat format, const Vector2i& size) : _hmd(hmd), _format(format), _size(size) {
-    ovrHmd_CreateSwapTextureSetGL(_hmd._hmd, GLenum(_format), _size.x(), _size.y(), &_swapTextureSet);
+namespace Magnum { namespace OvrIntegration {
+
+SwapTextureSet::SwapTextureSet(const Hmd& hmd, TextureFormat format, const Vector2i& size):
+    _hmd(hmd),
+    _format(format),
+    _size(size)
+{
+    ovr_CreateSwapTextureSetGL(_hmd.ovrHmd(), GLenum(_format), _size.x(), _size.y(), &_swapTextureSet);
 
     /* wrap the texture set for magnum */
-    _textures = new Texture2D*[_swapTextureSet->TextureCount];
+    _textures = Containers::Array<std::unique_ptr<Texture2D>>(_swapTextureSet->TextureCount);
 
-    for(Int i = 0; i < _swapTextureSet->TextureCount; ++i) {
-        _textures[i] = new Texture2D(wrap(_swapTextureSet->Textures[i]));
+    for(UnsignedInt i = 0; i < _textures.size(); ++i) {
+        _textures[i].reset(new Texture2D(wrap(_swapTextureSet->Textures[i])));
         _textures[i]->setMinificationFilter(Sampler::Filter::Linear)
                     .setMagnificationFilter(Sampler::Filter::Linear)
                     .setWrapping(Sampler::Wrapping::ClampToEdge);
@@ -54,14 +58,7 @@ SwapTextureSet::SwapTextureSet(const Hmd& hmd, TextureFormat format, const Vecto
 }
 
 SwapTextureSet::~SwapTextureSet() {
-    Int numTextures = _swapTextureSet->TextureCount;
-
-    ovrHmd_DestroySwapTextureSet(_hmd._hmd, _swapTextureSet);
-
-    for(Int i = 0; i < numTextures; ++i) {
-        delete _textures[i];
-    }
-    delete _textures;
+    ovr_DestroySwapTextureSet(_hmd.ovrHmd(), _swapTextureSet);
 }
 
 Texture2D& SwapTextureSet::activeTexture() const {
@@ -70,34 +67,32 @@ Texture2D& SwapTextureSet::activeTexture() const {
 
 //----------------------------------------------------------------
 
-Hmd::Hmd(::ovrHmd hmd, HmdStatusFlags flags) : _hmd(hmd), _flags(flags) {
+Hmd::Hmd(::ovrHmd hmd):
+    _hmd(hmd),
+    _hmdDesc(ovr_GetHmdDesc(_hmd)),
+    _flags(HmdStatusFlag(_hmdDesc.AvailableHmdCaps))
+{
+    /* _hmdDesc.AvailableHmdCaps is either 0 or ovrHmdCap_DebugDevice,
+     * and therefore can be simply cast to HmdStatusFlag */
 }
 
 Hmd::~Hmd() {
     if(_flags & HmdStatusFlag::HasMirrorTexture) {
-        ovrHmd_DestroyMirrorTexture(_hmd, _ovrMirrorTexture);
-        _mirrorTexture.reset();
+        ovr_DestroyMirrorTexture(_hmd, _ovrMirrorTexture);
     }
 
-    ovrHmd_Destroy(_hmd);
-}
-
-Hmd& Hmd::setEnabledCaps(HmdCapabilities caps){
-    ovrHmd_SetEnabledCaps(_hmd, HmdCapabilities::UnderlyingType(caps));
-    return *this;
+    ovr_Destroy(_hmd);
 }
 
 Hmd& Hmd::configureTracking(HmdTrackingCapabilities caps, HmdTrackingCapabilities required) {
-    ovrHmd_ConfigureTracking(_hmd,
-           HmdTrackingCapabilities::UnderlyingType(caps),
-           HmdTrackingCapabilities::UnderlyingType(required));
+    ovr_ConfigureTracking(_hmd, Int(caps), Int(required));
     return *this;
 }
 
 Hmd& Hmd::configureRendering() {
     /* get offset from center to left/right eye. The offset lengths may differ. */
-    _hmdToEyeViewOffset[0] = ovrHmd_GetRenderDesc(_hmd, ovrEye_Left, _hmd->DefaultEyeFov[0]).HmdToEyeViewOffset;
-    _hmdToEyeViewOffset[1] = ovrHmd_GetRenderDesc(_hmd, ovrEye_Right, _hmd->DefaultEyeFov[1]).HmdToEyeViewOffset;
+    _hmdToEyeViewOffset[0] = ovr_GetRenderDesc(_hmd, ovrEye_Left, _hmdDesc.DefaultEyeFov[0]).HmdToEyeViewOffset;
+    _hmdToEyeViewOffset[1] = ovr_GetRenderDesc(_hmd, ovrEye_Right, _hmdDesc.DefaultEyeFov[1]).HmdToEyeViewOffset;
 
     _viewScale.HmdSpaceToWorldScaleInMeters = 1.0f;
     _viewScale.HmdToEyeViewOffset[0] = _hmdToEyeViewOffset[0];
@@ -107,7 +102,7 @@ Hmd& Hmd::configureRendering() {
 }
 
 Vector2i Hmd::fovTextureSize(const Int eye) {
-    return Vector2i(ovrHmd_GetFovTextureSize(_hmd, ovrEyeType(eye), _hmd->DefaultEyeFov[eye], 1.0));
+    return Vector2i(ovr_GetFovTextureSize(_hmd, ovrEyeType(eye), _hmdDesc.DefaultEyeFov[eye], 1.0));
 }
 
 Texture2D& Hmd::createMirrorTexture(const TextureFormat format, const Vector2i& size) {
@@ -115,7 +110,7 @@ Texture2D& Hmd::createMirrorTexture(const TextureFormat format, const Vector2i& 
            "Hmd::createMirrorTexture may only be called once, returning result of previous call.",
             *_mirrorTexture);
 
-    ovrResult result = ovrHmd_CreateMirrorTextureGL(
+    ovrResult result = ovr_CreateMirrorTextureGL(
                 _hmd,
                 GLenum(format),
                 size.x(),
@@ -142,20 +137,20 @@ std::unique_ptr<SwapTextureSet> Hmd::createSwapTextureSet(TextureFormat format, 
 }
 
 Matrix4 Hmd::projectionMatrix(const Int eye, Float near, Float far) const {
-    ovrMatrix4f proj = ovrMatrix4f_Projection(_hmd->DefaultEyeFov[eye], near, far,
+    ovrMatrix4f proj = ovrMatrix4f_Projection(_hmdDesc.DefaultEyeFov[eye], near, far,
                                               ovrProjection_RightHanded | ovrProjection_ClipRangeOpenGL);
     return Matrix4(proj);
 }
 
 Matrix4 Hmd::orthoSubProjectionMatrix(const Int eye, const Matrix4& proj, const Vector2& scale, Float distance) const {
     ovrMatrix4f sub = ovrMatrix4f_OrthoSubProjection(ovrMatrix4f(proj), ovrVector2f(scale), distance,
-                                                      _hmdToEyeViewOffset[eye].x);
+                                                     _hmdToEyeViewOffset[eye].x);
     return Matrix4(sub);
 }
 
 Hmd& Hmd::pollEyePoses() {
-    _frameTiming = ovrHmd_GetFrameTiming(_hmd, _frameIndex);
-    _trackingState = ovrHmd_GetTrackingState(_hmd, _frameTiming.DisplayMidpointSeconds);
+    _frameTiming = ovr_GetFrameTiming(_hmd, _frameIndex);
+    _trackingState = ovr_GetTrackingState(_hmd, _frameTiming.DisplayMidpointSeconds);
     ovr_CalcEyePoses(_trackingState.HeadPose.ThePose, _hmdToEyeViewOffset, _ovrPoses);
 
     return *this;
@@ -170,7 +165,11 @@ std::array<DualQuaternion, 2> Hmd::eyePoses() {
 }
 
 void Hmd::setPerformanceHudMode(const PerformanceHudMode mode) const {
-    ovrHmd_SetInt(_hmd, "PerfHudMode", Int(mode));
+    ovr_SetInt(_hmd, OVR_PERF_HUD_MODE, Int(mode));
+}
+
+void Hmd::setDebugHudStereoMode(const DebugHudStereoMode mode) const {
+    ovr_SetInt(_hmd, OVR_DEBUG_HUD_STEREO_MODE, Int(mode));
 }
 
 }}

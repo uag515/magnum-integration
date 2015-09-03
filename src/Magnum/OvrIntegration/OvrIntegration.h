@@ -1,5 +1,5 @@
-#ifndef Magnum_LibOvrIntegration_LibOvrIntegration_h
-#define Magnum_LibOvrIntegration_LibOvrIntegration_h
+#ifndef Magnum_OvrIntegration_OvrIntegration_h
+#define Magnum_OvrIntegration_OvrIntegration_h
 /*
     This file is part of Magnum.
 
@@ -27,14 +27,14 @@
 */
 
 /** @file
- * @brief Forward declarations for the @ref Magnum::LibOvrIntegration namespace.
+ * @brief Forward declarations for the @ref Magnum::OvrIntegration namespace.
  *
  * @author Jonathan Hale (Squareys)
  */
 
 #include <Magnum/Magnum.h>
 
-namespace Magnum { namespace LibOvrIntegration {
+namespace Magnum { namespace OvrIntegration {
 
 class Hmd;
 class SwapTextureSet;
@@ -47,6 +47,7 @@ class LayerEyeFovDepth;
 class LayerQuad;
 class TimewarpProjectionDescription;
 
+enum class StatusFlag: Int;
 enum class HmdType: Int;
 enum class HmdCapability: Int;
 enum class HmdTrackingCapability: Int;
@@ -54,9 +55,10 @@ enum class HmdStatusFlag: UnsignedByte;
 enum class PerformanceHudMode: Int;
 enum class LayerType: Int;
 
+typedef Containers::EnumSet<StatusFlag, Int> StatusFlags;
 typedef Containers::EnumSet<HmdCapability, Int> HmdCapabilities;
 typedef Containers::EnumSet<HmdTrackingCapability, Int> HmdTrackingCapabilities;
-typedef Containers::EnumSet<HmdStatusFlag, UnsignedByte> HmdStatusFlags;
+typedef Containers::EnumSet<HmdStatusFlag, Int> HmdStatusFlags;
 
 }}
 

@@ -25,43 +25,5 @@
 #   DEALINGS IN THE SOFTWARE.
 #
 
-find_package(OVR REQUIRED)
-
-include_directories(${OVR_INCLUDE_DIR})
-
-set(MagnumLibOvrIntegration_SRCS
-    Conversion.cpp
-    Context.cpp
-    Hmd.cpp
-    Compositor.cpp)
-
-set(MagnumLibOvrIntegration_HEADERS
-    LibOvrIntegration.h
-    Conversion.h
-    HmdEnum.h
-    Context.h
-    Hmd.h
-    Compositor.h
-
-    visibility.h)
-
-# LibOvrIntegration library
-add_library(MagnumLibOvrIntegration SHARED
-    ${MagnumLibOvrIntegration_SRCS}
-    ${MagnumLibOvrIntegration_HEADERS})
-set_target_properties(MagnumLibOvrIntegration PROPERTIES DEBUG_POSTFIX "-d")
-if(BUILD_STATIC_PIC)
-    set_target_properties(MagnumLibOvrIntegration PROPERTIES POSITION_INDEPENDENT_CODE ON)
-endif()
-target_link_libraries(MagnumLibOvrIntegration
-    ${MAGNUM_LIBRARIES}
-    ${OVR_LIBRARY})
-
-install(TARGETS MagnumLibOvrIntegration DESTINATION ${MAGNUM_LIBRARY_INSTALL_DIR}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib)
-install(FILES ${MagnumLibOvrIntegration_HEADERS} DESTINATION ${MAGNUM_INCLUDE_INSTALL_DIR}/LibOvrIntegration)
-
-if(BUILD_TESTS)
-    add_subdirectory(Test)
-endif()
+corrade_add_test(OvrConversionTest ConversionTest.cpp LIBRARIES ${MAGNUM_LIBRARY})
+corrade_add_test(OvrEnumTest EnumTest.cpp LIBRARIES MagnumOvrIntegration ${MAGNUM_LIBRARY})

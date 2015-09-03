@@ -24,14 +24,14 @@
     DEALINGS IN THE SOFTWARE.
 */
 
-#include "Magnum/LibOvrIntegration/Context.h"
+#include "Magnum/OvrIntegration/Context.h"
 
-#include "Magnum/LibOvrIntegration/Hmd.h"
-#include "Magnum/LibOvrIntegration/HmdEnum.h"
+#include "Magnum/OvrIntegration/Hmd.h"
+#include "Magnum/OvrIntegration/HmdEnum.h"
 
 #include <OVR_CAPI_GL.h>
 
-namespace Magnum { namespace LibOvrIntegration {
+namespace Magnum { namespace OvrIntegration {
 
 Context* Context::_instance = nullptr;
 
@@ -56,29 +56,19 @@ Context& Context::get() {
     return *Context::_instance;
 }
 
-Int Context::detect() const {
-    return ovrHmd_Detect();
+bool Context::detect() const {
+    return ovr_GetHmdDesc(nullptr).Type != ovrHmd_None;
 }
 
-std::unique_ptr<Hmd> Context::createHmd(Int index, HmdType debugType) {
-    /* check if index is valid */
-    if(index >= 0 && detect() > index) {
+std::unique_ptr<Hmd> Context::createHmd() {
+    if(detect()) {
         ovrHmd hmd;
-        ovrHmd_Create(index, &hmd);
-        return std::unique_ptr<Hmd>(new Hmd(hmd, {}));
-    } else if(debugType != HmdType::None){
-        /* create a debug hmd instead of connecting to a device */
-        return createDebugHmd(debugType);
+        ovrGraphicsLuid luid;
+        ovr_Create(&hmd, &luid);
+        return std::unique_ptr<Hmd>(new Hmd(hmd));
     }
 
     return std::unique_ptr<Hmd>();
-}
-
-std::unique_ptr<Hmd> Context::createDebugHmd(HmdType debugType) {
-    ovrHmd hmd;
-    ovrHmd_CreateDebug(ovrHmdType(Int(debugType)), &hmd);
-
-    return std::unique_ptr<Hmd>(new Hmd(hmd, HmdStatusFlag::Debug));
 }
 
 }}
