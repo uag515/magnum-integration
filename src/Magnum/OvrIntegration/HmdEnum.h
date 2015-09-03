@@ -27,7 +27,7 @@
 */
 
 /** @file
- * @brief Enum @ref Magnum::OvrIntegration::HmdType, @ref Magnum::OvrIntegration::HmdCapability, @ref Magnum::OvrIntegration::HmdTrackingCapability, @ref Magnum::OvrIntegration::HmdStatusFlag, enum class @ref Magnum::OvrIntegration::HmdCapabilities, @ref Magnum::OvrIntegration::HmdTrackingCapabilities, @ref Magnum::OvrIntegration::HmdStatusFlags
+ * @brief Enum @ref Magnum::OvrIntegration::HmdType, @ref Magnum::OvrIntegration::HmdTrackingCapability, @ref Magnum::OvrIntegration::HmdStatusFlag, enum class @ref Magnum::OvrIntegration::HmdTrackingCapabilities, @ref Magnum::OvrIntegration::HmdStatusFlags
  *
  * @author Jonathan Hale (Squareys)
  */
@@ -213,14 +213,22 @@ enum class ErrorType: Int {
     DisplayLost = ovrError_DisplayLost, /**< In the event of a system-wide graphics reset or cable unplug this is returned to the app */
 };
 
-/** @debugoperatorclassenum{Magnum::OvrIntegration::HmdType,Magnum::OvrIntegration::ErrorType,
- * Magnum::OvrIntegration::StatusFlag,Magnum::OvrIntegration::PerformanceHudMode,Magnum::OvrIntegration::DebugHudStereoMode,
- * Magnum::OvrIntegration::ErrorType} */
+/** @debugoperatorenum{Magnum::OvrIntegration::HmdType} */
 Debug MAGNUM_OVRINTEGRATION_EXPORT operator<<(Debug debug, const HmdType value);
+
+/** @debugoperatorenum{Magnum::OvrIntegration::HmdTrackingCapability} */
 Debug MAGNUM_OVRINTEGRATION_EXPORT operator<<(Debug debug, const HmdTrackingCapability value);
+
+/** @debugoperatorenum{Magnum::OvrIntegration::StatusFlag} */
 Debug MAGNUM_OVRINTEGRATION_EXPORT operator<<(Debug debug, const StatusFlag value);
+
+/** @debugoperatorenum{Magnum::OvrIntegration::PerformanceHudMode} */
 Debug MAGNUM_OVRINTEGRATION_EXPORT operator<<(Debug debug, const PerformanceHudMode value);
+
+/** @debugoperatorenum{Magnum::OvrIntegration::DebugHudStereoMode} */
 Debug MAGNUM_OVRINTEGRATION_EXPORT operator<<(Debug debug, const DebugHudStereoMode value);
+
+/** @debugoperatorenum{Magnum::OvrIntegration::ErrorType} */
 Debug MAGNUM_OVRINTEGRATION_EXPORT operator<<(Debug debug, const ErrorType value);
 
 }}
