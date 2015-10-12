@@ -2,7 +2,7 @@ This is integration library for Magnum C++11/C++14 OpenGL graphics engine,
 providing integration of various math and physics libraries into the engine
 itself. If you don't know what Magnum is, see https://github.com/mosra/magnum.
 
-[![Linux Build Status](https://travis-ci.org/mosra/magnum-integration.svg?branch=compatibility)](https://travis-ci.org/mosra/magnum-integration) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/hs6ykva1ld74vavr/branch/compatibility?svg=true)](https://ci.appveyor.com/project/mosra/magnum-integration/branch/compatibility)
+[![Join the chat at https://gitter.im/mosra/magnum](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mosra/magnum?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Linux Build Status](https://travis-ci.org/mosra/magnum-integration.svg?branch=compatibility)](https://travis-ci.org/mosra/magnum-integration) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/hs6ykva1ld74vavr/branch/compatibility?svg=true)](https://ci.appveyor.com/project/mosra/magnum-integration/branch/compatibility)
 
 INSTALLATION
 ============
@@ -52,6 +52,7 @@ idea? Feel free to visit my website or contact me at:
 
 *   Website -- http://mosra.cz/blog/magnum.php
 *   GitHub -- https://github.com/mosra/magnum-integration
+*   Gitter -- https://gitter.im/mosra/magnum
 *   IRC -- join `#magnum-engine` channel on freenode
 *   Google Groups -- https://groups.google.com/forum/#!forum/magnum-engine
 *   Twitter -- https://twitter.com/czmosra
